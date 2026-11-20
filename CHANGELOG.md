@@ -2,10 +2,12 @@
 
 ## Unreleased
 
-- **Linux:** `inspectChildWaitState` and `reapChild` now fall back when the kernel
-  rejects `__WALL` (Linux < 4.7) instead of failing with `EINVAL`. Clone children
-  whose exit signal is 0 remain unobservable on those kernels and raise
-  `incomplete` instead of being reported as absent.
+- **Linux:** `inspectChildWaitState` now falls back to direct-child observation when
+  the kernel rejects `__WALL` in `waitid` options (Linux < 4.7) instead of failing
+  with `EINVAL`. Clone children whose exit signal is 0 stay invisible in that mode, so
+  the observation raises `incomplete` instead of reporting an absent or running
+  aggregate; `reapChild` is unaffected because `waitpid` accepts `__WALL` on those
+  kernels.
 ## 0.4.2 - 2026-10-19
 
 - Darwin census handles concurrent exits: processes already exiting report parentage, process group, owner, and state instead of an incomplete row, and a process reaped while its row is read is omitted instead of returned without `identity`.
